@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadmux Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Cadmux Security</h1>
+        <p class="subtitle">Light Matrix Cybersecurity Console</p>
+      </header>
+
+      <section class="panel">
+        <h2>Run Network Scan</h2>
+        <form method="post" action="/scan" class="scan-form">
+          <label>Tool
+            <select name="tool">
+              {% for tool in tool_options %}
+              <option value="{{ tool }}">{{ tool }}</option>
+              {% endfor %}
+            </select>
+          </label>
+
+          <label>Target (IP, CIDR, or hostname)
+            <input type="text" name="target" placeholder="192.168.1.0/24" required />
+          </label>
+
+          <label>Scan Type
+            <select name="scan_type">
+              {% for scan in scan_options %}
+              <option value="{{ scan }}">{{ scan }}</option>
+              {% endfor %}
+            </select>
+          </label>
+
+          <label>Extra Nmap Arguments (optional)
+            <input type="text" name="extra_args" placeholder="--open" />
+          </label>
+
+          <button type="submit">Execute Scan</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Results</h2>
+        {% if recent_scans %}
+          {% for result in recent_scans %}
+          <article class="result {{ result.status }}">
+            <div class="result-header">
+              <strong>{{ result.tool }}</strong>
+              <span>{{ result.started_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</span>
+              <span class="status">{{ result.status }}</span>
+            </div>
+            <p><strong>Target:</strong> {{ result.target }}</p>
+            {% if result.command %}<p><strong>Command:</strong> <code>{{ result.command }}</code></p>{% endif %}
+            {% if result.error %}
+              <p class="error">{{ result.error }}</p>
+            {% else %}
+              <pre>{{ result.output | tojson(indent=2) }}</pre>
+            {% endif %}
+          </article>
+          {% endfor %}
+        {% else %}
+          <p>No scans yet. Start one above.</p>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>
