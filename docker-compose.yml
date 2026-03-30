@@ -3,7 +3,7 @@ services:
     build: .
     container_name: cadmux-security
     ports:
-      - "8080:8080"
+      - "5050:5050"
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped

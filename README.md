@@ -62,16 +62,16 @@ Cadmux Security is a Python-based, Dockerized Linux security application with an
 docker compose up --build
 ```
 
-Open `http://localhost:8080`.
+Open `http://localhost:5050`.
 
 ### Option 2: Docker CLI
 
 ```bash
 docker build -t cadmux-security .
-docker run --rm -p 8080:8080 cadmux-security
+docker run --rm -p 5050:5050 cadmux-security
 ```
 
-Open `http://localhost:8080`.
+Open `http://localhost:5050`.
 
 ## Local development (without Docker)
 
