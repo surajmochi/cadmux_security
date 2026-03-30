@@ -14,6 +14,6 @@ COPY app ./app
 
 RUN pip install --no-cache-dir .
 
-EXPOSE 8080
+EXPOSE 5050
 
 CMD ["python", "-m", "app.main"]
