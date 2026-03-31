@@ -126,3 +126,19 @@ git push -u origin main
 ## Security note
 
 Run scans only on systems/networks you own or are explicitly authorized to test.
+
+## One-command Linux auto-update deploy
+
+Use the included script to pull the latest GitHub changes and redeploy the Docker service with a fresh build:
+
+```bash
+./deploy_update.sh
+```
+
+What it does:
+- Verifies `git` and `docker` are installed.
+- Ensures your working tree is clean.
+- Pulls latest commits from `origin/<current-branch>`.
+- Rebuilds and restarts containers using Docker Compose (`docker compose` or `docker-compose`).
+
+Tip: run it manually after new commits are pushed, or schedule it with cron/systemd timer.
