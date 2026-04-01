@@ -31,6 +31,8 @@ app.config["SMTP_PORT"] = int(os.environ.get("SMTP_PORT", "587"))
 app.config["SMTP_USER"] = os.environ.get("SMTP_USER")
 app.config["SMTP_PASS"] = os.environ.get("SMTP_PASS")
 app.config["MAIL_SENDER"] = os.environ.get("MAIL_SENDER", "no-reply@cadmux.local")
+app.config["SMTP_STARTTLS"] = os.environ.get("SMTP_STARTTLS", "true").lower() == "true"
+app.config["SMTP_SSL"] = os.environ.get("SMTP_SSL", "false").lower() == "true"
 plugins = PluginManager()
 plugins.register(NmapTool())
 recent_scans: deque[ScanResult] = deque(maxlen=30)
@@ -81,7 +83,7 @@ def read_token(token: str, purpose: str, max_age_seconds: int = 3600) -> str | N
         return None
 
 
-def send_email(to_email: str, subject: str, body: str) -> None:
+def send_email(to_email: str, subject: str, body: str, html_body: str | None = None) -> bool:
     host = app.config["SMTP_HOST"]
     user = app.config["SMTP_USER"]
     password = app.config["SMTP_PASS"]
@@ -89,19 +91,34 @@ def send_email(to_email: str, subject: str, body: str) -> None:
 
     if not host:
         logger.warning("SMTP not configured. Email to %s\nSubject: %s\n%s", to_email, subject, body)
-        return
+        return False
 
     msg = EmailMessage()
     msg["Subject"] = subject
     msg["From"] = sender
     msg["To"] = to_email
     msg.set_content(body)
+    if html_body:
+        msg.add_alternative(html_body, subtype="html")
 
-    with smtplib.SMTP(host, app.config["SMTP_PORT"], timeout=15) as smtp:
-        smtp.starttls()
-        if user and password:
-            smtp.login(user, password)
-        smtp.send_message(msg)
+    try:
+        if app.config["SMTP_SSL"]:
+            smtp_conn = smtplib.SMTP_SSL(host, app.config["SMTP_PORT"], timeout=15)
+        else:
+            smtp_conn = smtplib.SMTP(host, app.config["SMTP_PORT"], timeout=15)
+
+        with smtp_conn as smtp:
+            smtp.ehlo()
+            if app.config["SMTP_STARTTLS"] and not app.config["SMTP_SSL"]:
+                smtp.starttls()
+                smtp.ehlo()
+            if user and password:
+                smtp.login(user, password)
+            smtp.send_message(msg)
+        return True
+    except Exception:
+        logger.exception("Failed to send email to %s with subject %s", to_email, subject)
+        return False
 
 
 @app.before_request
@@ -164,17 +181,22 @@ def register() -> str:
 
     token = build_token(email, "verify")
     verify_url = url_for("verify_registration", token=token, _external=True)
-    send_email(
-        email,
-        "Verify your Cadmux Security account",
-        (
+    email_sent = send_email(
+        to_email=email,
+        subject="Verify your Cadmux Security account",
+        body=(
             f"Hi {name},\n\n"
             "Thank you for registering with Cadmux Security.\n"
             f"Click this link to verify your account: {verify_url}\n\n"
+            "This link expires in 24 hours.\n"
             "If you did not create this account, you can ignore this email."
         ),
+        html_body=render_template("emails/verify_registration.html", name=name, verify_url=verify_url),
     )
-    flash("Registration created. Please verify through the email we sent before logging in.", "success")
+    if email_sent:
+        flash("Registration created. Please verify through the email we sent before logging in.", "success")
+    else:
+        flash("Registration created, but verification email could not be sent. Contact support.", "error")
     return redirect(url_for("login"))
 
 

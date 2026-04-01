@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <body style="margin:0;background:#141016;color:#f2f2f2;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:24px 12px;background:#141016;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="640" cellspacing="0" cellpadding="0" style="max-width:640px;background:#1a141c;border:1px solid #2f2435;border-radius:12px;padding:28px;">
+            <tr>
+              <td style="font-size:28px;line-height:1.2;font-weight:700;padding-bottom:12px;">🔐 Cadmux Security</td>
+            </tr>
+            <tr>
+              <td style="font-size:36px;line-height:1.15;font-weight:700;padding-bottom:20px;">Verify your Cadmux Security account</td>
+            </tr>
+            <tr>
+              <td style="font-size:22px;line-height:1.4;padding-bottom:22px;">Welcome, {{ name }}!</td>
+            </tr>
+            <tr>
+              <td style="font-size:18px;line-height:1.6;padding-bottom:20px;">Thank you for registering. Click below to verify your email address:</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom:22px;">
+                <a href="{{ verify_url }}" style="display:inline-block;padding:13px 18px;background:#0e77ff;color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;border-radius:8px;">VERIFY EMAIL ADDRESS</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size:14px;line-height:1.5;color:#d8d8d8;padding-bottom:22px;word-break:break-all;">
+                Or copy this link:<br />
+                <a href="{{ verify_url }}" style="color:#8fc2ff;">{{ verify_url }}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size:20px;line-height:1.4;font-weight:700;padding-bottom:12px;">⏰ Link expires in 24 hours.</td>
+            </tr>
+            <tr>
+              <td style="font-size:14px;line-height:1.5;color:#d8d8d8;">If you did not register for Cadmux Security, ignore this email.</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
