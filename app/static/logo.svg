@@ -1,0 +1,17 @@
+<svg width="900" height="340" viewBox="0 0 900 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="120" y1="20" x2="330" y2="230" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1CA8BF"/>
+      <stop offset="1" stop-color="#1D4A8B"/>
+    </linearGradient>
+  </defs>
+  <path d="M224 20C258 49 294 53 327 55C334 143 311 202 224 248C136 201 114 144 121 55C154 54 190 49 224 20Z" stroke="url(#g)" stroke-width="14" fill="white"/>
+  <path d="M179 95C190 77 226 69 253 90" stroke="url(#g)" stroke-width="14" stroke-linecap="round"/>
+  <path d="M175 124C185 103 213 93 236 108" stroke="url(#g)" stroke-width="14" stroke-linecap="round"/>
+  <path d="M206 132C242 89 269 74 287 82C302 89 304 128 290 180" stroke="url(#g)" stroke-width="14" stroke-linecap="round"/>
+  <rect x="242" y="136" width="32" height="38" rx="8" stroke="url(#g)" stroke-width="8" fill="white"/>
+  <path d="M258 148V157" stroke="url(#g)" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="258" cy="145" r="9" stroke="url(#g)" stroke-width="6" fill="white"/>
+  <text x="360" y="195" fill="#113B78" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="92" letter-spacing="5">CADMUX</text>
+  <text x="413" y="255" fill="#113B78" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="52" letter-spacing="14">SECURITY</text>
+</svg>
