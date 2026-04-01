@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Register | Cadmux Security{% endblock %}
+{% block body %}
+<main class="auth-shell">
+  <section class="auth-card panel">
+    <img src="{{ url_for('static', filename='logo.svg') }}" class="brand-logo" alt="Cadmux Security logo" />
+    <h1>Create account</h1>
+    <p class="subtitle">Register first to start scanning</p>
+    <form method="post" action="{{ url_for('register') }}" class="auth-form">
+      <label>Full Name
+        <input type="text" name="name" required />
+      </label>
+      <label>Email
+        <input type="email" name="email" required />
+      </label>
+      <label>Password
+        <input type="password" name="password" minlength="8" required />
+      </label>
+      <button type="submit">Register</button>
+    </form>
+    <div class="auth-links">
+      <a href="{{ url_for('login') }}">Already have an account? Login</a>
+    </div>
+  </section>
+</main>
+{% endblock %}
