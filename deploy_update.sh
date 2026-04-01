@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Auto-update script for Cadmux Security.
-# Usage: ./deploy_update.sh
+# In-place auto-update script for Cadmux Security.
+# Usage: ./deploy_update.sh [container_id]
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$REPO_DIR"
@@ -41,21 +41,31 @@ git fetch "$REMOTE" "$BRANCH"
 echo "==> Pulling latest code"
 git pull --ff-only "$REMOTE" "$BRANCH"
 
-# Determine whether Docker Compose V2 or legacy docker-compose is available.
-if docker compose version >/dev/null 2>&1; then
-  COMPOSE_CMD=(docker compose)
-elif command -v docker-compose >/dev/null 2>&1; then
-  COMPOSE_CMD=(docker-compose)
-else
-  echo "Error: docker compose is not available (neither 'docker compose' nor 'docker-compose')." >&2
+# Keep updates in the existing container, do not rebuild/recreate.
+DEFAULT_CONTAINER_ID="5c7c20fb9d61"
+CONTAINER_ID="${1:-${CONTAINER_ID:-$DEFAULT_CONTAINER_ID}}"
+
+if ! docker container inspect "$CONTAINER_ID" >/dev/null 2>&1; then
+  echo "Error: container '$CONTAINER_ID' was not found." >&2
   exit 1
 fi
 
-echo "==> Rebuilding images and restarting containers"
-"${COMPOSE_CMD[@]}" pull --ignore-pull-failures || true
-"${COMPOSE_CMD[@]}" up -d --build --remove-orphans
+RUNNING_STATE="$(docker inspect -f '{{.State.Running}}' "$CONTAINER_ID")"
+if [[ "$RUNNING_STATE" != "true" ]]; then
+  echo "==> Starting existing container $CONTAINER_ID"
+  docker start "$CONTAINER_ID" >/dev/null
+fi
 
-echo "==> Cleanup dangling images"
-docker image prune -f >/dev/null 2>&1 || true
+echo "==> Syncing updated source code into container $CONTAINER_ID"
+docker exec "$CONTAINER_ID" sh -lc "rm -rf /app/app"
+docker cp "$REPO_DIR/app" "$CONTAINER_ID:/app"
+docker cp "$REPO_DIR/pyproject.toml" "$CONTAINER_ID:/app/pyproject.toml"
+docker cp "$REPO_DIR/README.md" "$CONTAINER_ID:/app/README.md"
 
-echo "Done. Application updated and running with latest code/configuration."
+echo "==> Reinstalling app dependencies in existing container"
+docker exec "$CONTAINER_ID" sh -lc "cd /app && pip install --no-cache-dir ."
+
+echo "==> Restarting existing container (no rebuild, no new container)"
+docker restart "$CONTAINER_ID" >/dev/null
+
+echo "Done. Application updated in-place inside container $CONTAINER_ID."
