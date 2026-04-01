@@ -1,113 +1,109 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadmux Security</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-  </head>
-  <body>
-    <main class="app-shell">
-      <aside class="sidebar panel">
-        <h2 class="sidebar-title">Modules</h2>
-        <section class="sidebar-group">
-          <h3>Information Gathering</h3>
-          <button type="button" class="nav-item" id="scan-toggle" aria-expanded="false" aria-controls="scan-capabilities">
-            NMAP
-          </button>
-          <div class="capabilities" id="scan-capabilities" hidden>
-            <p>Capabilities</p>
-            <ul>
-              <li>Targeted host, CIDR, or domain scans</li>
-              <li>Built-in advanced profiles (OS/service/NSE/stealth/evasion)</li>
-              <li>Custom Nmap flag support</li>
-            </ul>
-            <p>Features</p>
-            <ul>
-              <li>Input validation and safe command execution</li>
-              <li>Structured JSON result output</li>
-              <li>In-memory recent scan history</li>
-            </ul>
-          </div>
-        </section>
-      </aside>
+{% extends "base.html" %}
+{% block title %}Dashboard | Cadmux Security{% endblock %}
+{% block body %}
+<main class="app-shell">
+  <aside class="sidebar panel">
+    <div class="brand-block">
+      <img src="{{ url_for('static', filename='logo.svg') }}" class="brand-logo small" alt="Cadmux Security logo" />
+      <div>
+        <h2 class="sidebar-title">Cadmux Security</h2>
+        <p class="subtitle">Welcome, {{ user['name'] }}</p>
+      </div>
+    </div>
+    <section class="sidebar-group">
+      <h3>Information Gathering</h3>
+      <button type="button" class="nav-item" id="scan-toggle" aria-expanded="false" aria-controls="scan-capabilities">
+        NMAP
+      </button>
+      <div class="capabilities" id="scan-capabilities" hidden>
+        <p>Capabilities</p>
+        <ul>
+          <li>Targeted host, CIDR, or domain scans</li>
+          <li>Built-in advanced profiles (OS/service/NSE/stealth/evasion)</li>
+          <li>Custom Nmap flag support</li>
+        </ul>
+      </div>
+    </section>
+    <form method="post" action="{{ url_for('logout') }}">
+      <button type="submit" class="logout-btn">Logout</button>
+    </form>
+  </aside>
 
-      <section class="main-content">
-        <header>
-          <h1>Cadmux Security</h1>
-          <p class="subtitle">Light Matrix Cybersecurity Console</p>
-        </header>
+  <section class="main-content">
+    <header>
+      <h1>Security Dashboard</h1>
+      <p class="subtitle">Light Matrix Cybersecurity Console</p>
+    </header>
 
-        <section class="panel" id="run-network-scan-panel">
-          <h2>NMAP</h2>
-          <form method="post" action="/scan" class="scan-form">
-            <label>Tool
-              <select name="tool">
-                {% for tool in tool_options %}
-                <option value="{{ tool }}">{{ tool }}</option>
-                {% endfor %}
-              </select>
-            </label>
-
-            <label>Target (IP, CIDR, or hostname)
-              <input type="text" name="target" placeholder="192.168.1.0/24" required />
-            </label>
-
-            <label>Scan Type
-              <select name="scan_type">
-                {% for scan in scan_options %}
-                <option value="{{ scan }}">{{ scan }}</option>
-                {% endfor %}
-              </select>
-            </label>
-
-            <label>Extra Nmap Arguments (optional)
-              <input type="text" name="extra_args" placeholder="--open" />
-            </label>
-
-            <button type="submit">Execute Scan</button>
-          </form>
-        </section>
-
-        <section class="panel">
-          <h2>Recent Results</h2>
-          {% if recent_scans %}
-            {% for result in recent_scans %}
-            <article class="result {{ result.status }}">
-              <div class="result-header">
-                <strong>{{ result.tool }}</strong>
-                <span>{{ result.started_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</span>
-                <span class="status">{{ result.status }}</span>
-              </div>
-              <p><strong>Target:</strong> {{ result.target }}</p>
-              {% if result.command %}<p><strong>Command:</strong> <code>{{ result.command }}</code></p>{% endif %}
-              {% if result.error %}
-                <p class="error">{{ result.error }}</p>
-              {% else %}
-                <pre>{{ result.output | tojson(indent=2) }}</pre>
-              {% endif %}
-            </article>
+    <section class="panel" id="run-network-scan-panel">
+      <h2>NMAP</h2>
+      <form method="post" action="/scan" class="scan-form">
+        <label>Tool
+          <select name="tool">
+            {% for tool in tool_options %}
+            <option value="{{ tool }}">{{ tool }}</option>
             {% endfor %}
+          </select>
+        </label>
+
+        <label>Target (IP, CIDR, or hostname)
+          <input type="text" name="target" placeholder="192.168.1.0/24" required />
+        </label>
+
+        <label>Scan Type
+          <select name="scan_type">
+            {% for scan in scan_options %}
+            <option value="{{ scan }}">{{ scan }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>Extra Nmap Arguments (optional)
+          <input type="text" name="extra_args" placeholder="--open" />
+        </label>
+
+        <button type="submit">Execute Scan</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Results</h2>
+      {% if recent_scans %}
+        {% for result in recent_scans %}
+        <article class="result {{ result.status }}">
+          <div class="result-header">
+            <strong>{{ result.tool }}</strong>
+            <span>{{ result.started_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</span>
+            <span class="status">{{ result.status }}</span>
+          </div>
+          <p><strong>Target:</strong> {{ result.target }}</p>
+          {% if result.command %}<p><strong>Command:</strong> <code>{{ result.command }}</code></p>{% endif %}
+          {% if result.error %}
+            <p class="error">{{ result.error }}</p>
           {% else %}
-            <p>No scans yet. Start one above.</p>
+            <pre>{{ result.output | tojson(indent=2) }}</pre>
           {% endif %}
-        </section>
-      </section>
-    </main>
+        </article>
+        {% endfor %}
+      {% else %}
+        <p>No scans yet. Start one above.</p>
+      {% endif %}
+    </section>
+  </section>
+</main>
 
-    <script>
-      const toggle = document.getElementById("scan-toggle");
-      const capabilities = document.getElementById("scan-capabilities");
-      const scanPanel = document.getElementById("run-network-scan-panel");
+<script>
+  const toggle = document.getElementById("scan-toggle");
+  const capabilities = document.getElementById("scan-capabilities");
+  const scanPanel = document.getElementById("run-network-scan-panel");
 
-      if (toggle && capabilities && scanPanel) {
-        toggle.addEventListener("click", () => {
-          const expanded = toggle.getAttribute("aria-expanded") === "true";
-          toggle.setAttribute("aria-expanded", String(!expanded));
-          capabilities.hidden = expanded;
-          scanPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-      }
-    </script>
-  </body>
-</html>
+  if (toggle && capabilities && scanPanel) {
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!expanded));
+      capabilities.hidden = expanded;
+      scanPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+</script>
+{% endblock %}
