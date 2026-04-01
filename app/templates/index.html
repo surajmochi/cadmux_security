@@ -13,13 +13,13 @@
         <section class="sidebar-group">
           <h3>Information Gathering</h3>
           <button type="button" class="nav-item" id="scan-toggle" aria-expanded="false" aria-controls="scan-capabilities">
-            Run Network Scan
+            NMAP
           </button>
           <div class="capabilities" id="scan-capabilities" hidden>
             <p>Capabilities</p>
             <ul>
               <li>Targeted host, CIDR, or domain scans</li>
-              <li>Built-in scan profiles (quick/intense/ports/ping)</li>
+              <li>Built-in advanced profiles (OS/service/NSE/stealth/evasion)</li>
               <li>Custom Nmap flag support</li>
             </ul>
             <p>Features</p>
@@ -39,7 +39,7 @@
         </header>
 
         <section class="panel" id="run-network-scan-panel">
-          <h2>Run Network Scan</h2>
+          <h2>NMAP</h2>
           <form method="post" action="/scan" class="scan-form">
             <label>Tool
               <select name="tool">

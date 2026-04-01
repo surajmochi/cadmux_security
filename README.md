@@ -40,10 +40,20 @@ Cadmux Security is a Python-based, Dockerized Linux security application with an
      - `intense`: `-T4 -A -v`
      - `ports`: `-sV`
      - `ping`: `-sn`
+     - `stealth_syn`: `-sS -T4 --open`
+     - `udp_top_ports`: `-sU --top-ports 100 -T4`
+     - `os_service`: `-O -sV --osscan-guess -T4`
+     - `nse_discovery`: `-sV --script discovery -T4`
+     - `nse_auth`: `-sV --script auth -T4`
+     - `nse_vuln`: `-sV --script vuln -T4`
+     - `aggressive_t5`: `-sS -sV -O -T5 --open`
+     - `firewall_evasion_fragment`: `-sS -Pn -f --mtu 24 -T3`
+     - `decoy_scan`: `-sS -D RND:10 -T4`
+     - `full_tcp_output`: `-sS -p- -T4 -oA nmap_full_tcp`
 
 2. **Input parameters**
    - Target: IP, CIDR, or hostname.
-   - Scan profile: quick/intense/ports/ping.
+   - Scan profile: standard and advanced Nmap profiles.
    - Extra args: optional additional Nmap flags.
 
 3. **Scalability model**

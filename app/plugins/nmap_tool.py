@@ -18,6 +18,16 @@ class NmapTool(BaseTool):
         "intense": ["-T4", "-A", "-v"],
         "ports": ["-sV"],
         "ping": ["-sn"],
+        "stealth_syn": ["-sS", "-T4", "--open"],
+        "udp_top_ports": ["-sU", "--top-ports", "100", "-T4"],
+        "os_service": ["-O", "-sV", "--osscan-guess", "-T4"],
+        "nse_discovery": ["-sV", "--script", "discovery", "-T4"],
+        "nse_auth": ["-sV", "--script", "auth", "-T4"],
+        "nse_vuln": ["-sV", "--script", "vuln", "-T4"],
+        "aggressive_t5": ["-sS", "-sV", "-O", "-T5", "--open"],
+        "firewall_evasion_fragment": ["-sS", "-Pn", "-f", "--mtu", "24", "-T3"],
+        "decoy_scan": ["-sS", "-D", "RND:10", "-T4"],
+        "full_tcp_output": ["-sS", "-p-", "-T4", "-oA", "nmap_full_tcp"],
     }
 
     def scan(self, request: ScanRequest) -> ScanResult:
@@ -92,18 +102,58 @@ def parse_nmap_xml(xml_output: str) -> dict:
         addr = host.find("address")
         status_el = host.find("status")
         ports_el = host.find("ports")
+        hostnames_el = host.find("hostnames")
+        os_el = host.find("os")
+        hostscript_el = host.find("hostscript")
 
         ports = []
         if ports_el is not None:
             for port in ports_el.findall("port"):
                 state_el = port.find("state")
                 svc_el = port.find("service")
+                script_results = []
+                for script_el in port.findall("script"):
+                    script_results.append(
+                        {
+                            "id": script_el.get("id", "unknown"),
+                            "output": script_el.get("output", ""),
+                        }
+                    )
                 ports.append(
                     {
                         "port": int(port.get("portid", "0")),
                         "protocol": port.get("protocol", "unknown"),
                         "state": state_el.get("state", "unknown") if state_el is not None else "unknown",
                         "service": svc_el.get("name", "unknown") if svc_el is not None else "unknown",
+                        "product": svc_el.get("product", "") if svc_el is not None else "",
+                        "version": svc_el.get("version", "") if svc_el is not None else "",
+                        "extra_info": svc_el.get("extrainfo", "") if svc_el is not None else "",
+                        "scripts": script_results,
+                    }
+                )
+
+        hostnames = []
+        if hostnames_el is not None:
+            for hostname in hostnames_el.findall("hostname"):
+                hostnames.append(hostname.get("name", "unknown"))
+
+        os_matches = []
+        if os_el is not None:
+            for osmatch in os_el.findall("osmatch"):
+                os_matches.append(
+                    {
+                        "name": osmatch.get("name", "unknown"),
+                        "accuracy": osmatch.get("accuracy", "0"),
+                    }
+                )
+
+        host_scripts = []
+        if hostscript_el is not None:
+            for script_el in hostscript_el.findall("script"):
+                host_scripts.append(
+                    {
+                        "id": script_el.get("id", "unknown"),
+                        "output": script_el.get("output", ""),
                     }
                 )
 
@@ -111,6 +161,9 @@ def parse_nmap_xml(xml_output: str) -> dict:
             {
                 "address": addr.get("addr", "unknown") if addr is not None else "unknown",
                 "status": status_el.get("state", "unknown") if status_el is not None else "unknown",
+                "hostnames": hostnames,
+                "os_matches": os_matches,
+                "host_scripts": host_scripts,
                 "ports": ports,
             }
         )
