@@ -1,7 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Register | Cadmux Security{% endblock %}
 {% block body %}
-<main class="auth-shell">
+<main class="auth-shell auth-shell-split">
+  <section class="auth-card panel auth-slider">
+    <h2>Getting Started</h2>
+    <div class="slide-track">
+      <article class="slide-item active">
+        <h3>Create Data</h3>
+        <p>Register your account details and keep your credentials secure.</p>
+      </article>
+      <article class="slide-item">
+        <h3>Email Verification</h3>
+        <p>We send a verification email. Click the link to activate your account.</p>
+      </article>
+      <article class="slide-item">
+        <h3>Login Ready</h3>
+        <p>After verification, you are redirected to login and can access the dashboard.</p>
+      </article>
+    </div>
+  </section>
+
   <section class="auth-card panel">
     <img src="{{ url_for('static', filename='logo.svg') }}" class="brand-logo" alt="Cadmux Security logo" />
     <h1>Create account</h1>
