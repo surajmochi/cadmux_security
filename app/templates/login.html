@@ -2,24 +2,6 @@
 {% block title %}Login | Cadmux Security{% endblock %}
 {% block body %}
 <main class="auth-shell auth-shell-split">
-  <section class="auth-card panel auth-slider">
-    <h2>Account Access</h2>
-    <div class="slide-track">
-      <article class="slide-item active">
-        <h3>Verified Sign-in</h3>
-        <p>Only verified users can access the Cadmux Security dashboard.</p>
-      </article>
-      <article class="slide-item">
-        <h3>Password Recovery</h3>
-        <p>Reset requests are validated using email verification links.</p>
-      </article>
-      <article class="slide-item">
-        <h3>Secure Workflow</h3>
-        <p>Every key action has an email checkpoint for stronger account safety.</p>
-      </article>
-    </div>
-  </section>
-
   <section class="auth-card panel">
     <img src="{{ url_for('static', filename='logo.svg') }}" class="brand-logo" alt="Cadmux Security logo" />
     <h1>Sign in</h1>
