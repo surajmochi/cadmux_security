@@ -1,43 +1,109 @@
 :root {
-  --bg: #f7fbf9;
+  --bg: #f4f8fc;
   --panel: #ffffff;
-  --border: #cfe7dc;
-  --text: #0f2a20;
-  --accent: #1e8f5a;
-  --accent-soft: #d9f7e9;
+  --border: #d3e0f0;
+  --text: #0e2e4f;
+  --accent: #1a4e8a;
+  --accent-2: #1c95b5;
+  --accent-soft: #e7f1fb;
   --error: #b3261e;
+  --success: #126d3d;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-family: "Inter", "Segoe UI", sans-serif;
   color: var(--text);
-  background:
-    linear-gradient(180deg, rgba(30, 143, 90, 0.05), transparent 160px),
-    repeating-linear-gradient(
-      to bottom,
-      rgba(30, 143, 90, 0.06),
-      rgba(30, 143, 90, 0.06) 1px,
-      transparent 1px,
-      transparent 24px
-    ),
-    var(--bg);
+  background: radial-gradient(circle at top right, rgba(28, 149, 181, 0.15), transparent 35%), var(--bg);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 10px 25px rgba(22, 68, 117, 0.1);
+}
+
+.flash-wrap {
+  max-width: 900px;
+  margin: 0.75rem auto 0;
+  padding: 0 1rem;
+}
+
+.flash {
+  margin: 0.4rem 0;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.flash.error { background: #fee9e7; color: var(--error); }
+.flash.success { background: #e8f8ef; color: var(--success); }
+
+.brand-logo {
+  width: 220px;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto 0.5rem;
+}
+
+.brand-logo.small {
+  width: 115px;
+  margin: 0;
+}
+
+.auth-shell {
+  min-height: calc(100vh - 100px);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.auth-card {
+  width: min(500px, 100%);
+  padding: 1.2rem 1.4rem;
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.auth-links {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.auth-links a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .app-shell {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem 4rem;
+  padding: 1rem 1rem 3rem;
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 1rem;
 }
 
-.main-content {
-  min-width: 0;
+.brand-block {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  align-items: center;
 }
+
+.main-content { min-width: 0; }
 
 header h1 {
   margin-bottom: 0.2rem;
@@ -45,17 +111,8 @@ header h1 {
 }
 
 .subtitle {
-  opacity: 0.8;
+  opacity: 0.85;
   margin-top: 0;
-}
-
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1rem;
-  margin: 1rem 0;
-  box-shadow: 0 6px 18px rgba(20, 70, 45, 0.08);
 }
 
 .sidebar {
@@ -66,12 +123,8 @@ header h1 {
 }
 
 .sidebar-title {
-  margin: 0 0 1rem;
+  margin: 0 0 0.4rem;
   color: var(--accent);
-}
-
-.sidebar-group h3 {
-  margin: 0 0 0.65rem;
 }
 
 .nav-item {
@@ -96,17 +149,7 @@ header h1 {
   padding: 0.75rem;
   border: 1px dashed var(--border);
   border-radius: 8px;
-  background: #fbfffd;
-}
-
-.capabilities p {
-  margin: 0.2rem 0;
-  font-weight: 700;
-}
-
-.capabilities ul {
-  margin: 0.2rem 0 0.7rem 1rem;
-  padding: 0;
+  background: #fbfdff;
 }
 
 .scan-form {
@@ -137,12 +180,18 @@ button {
   align-self: end;
 }
 
+.logout-btn {
+  width: 100%;
+  margin-top: 1rem;
+  background: #14365f;
+}
+
 .result {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.8rem;
   margin-bottom: 0.75rem;
-  background: #fbfffd;
+  background: #fbfdff;
 }
 
 .result-header {
@@ -164,18 +213,13 @@ pre {
   margin: 0;
   max-height: 360px;
   overflow: auto;
-  background: #f1fbf6;
+  background: #f1f6fb;
   border: 1px solid var(--border);
   padding: 0.6rem;
   border-radius: 8px;
 }
 
 @media (max-width: 900px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    position: static;
-  }
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
 }
